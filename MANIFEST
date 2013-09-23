@@ -1,0 +1,12 @@
+Changes
+LICENSE
+MANIFEST
+META.json
+META.yml
+Makefile.PL
+README
+lib/Dist/Zilla/Plugin/TravisCI/StatusBadge.pm
+t/00-compile.t
+t/release-distmeta.t
+t/release-pod-syntax.t
+t/release-test-version.t
