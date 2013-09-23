@@ -3,7 +3,7 @@ NAME
     for your markdown README
 
 VERSION
-    version 0.001
+    version 0.002
 
 SYNOPSIS
         ; in dist.ini
@@ -13,7 +13,7 @@ SYNOPSIS
 
 DESCRIPTION
     Scans dist files if a "README.md" file has found, a Travis CI 'build
-    status' badge will be added after VERSION header. Use
+    status' badge will be added before the VERSION header. Use
     Dist::Zilla::Plugin:::ReadmeAnyFromPod in markdown mode or any other
     plugin to generate README.md.
 
