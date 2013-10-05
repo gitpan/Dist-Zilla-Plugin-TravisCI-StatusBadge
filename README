@@ -3,7 +3,7 @@ NAME
     for your markdown README
 
 VERSION
-    version 0.002
+    version 0.003
 
 SYNOPSIS
         ; in dist.ini
@@ -12,9 +12,9 @@ SYNOPSIS
         repo = p5-John-Doe-Stuff
 
 DESCRIPTION
-    Scans dist files if a "README.md" file has found, a Travis CI 'build
-    status' badge will be added before the VERSION header. Use
-    Dist::Zilla::Plugin:::ReadmeAnyFromPod in markdown mode or any other
+    Scans dist files if a "README.md" file has found, a Travis CI "build
+    status" badge will be added before the VERSION header. Use
+    Dist::Zilla::Plugin::ReadmeAnyFromPod in markdown mode or any other
     plugin to generate README.md.
 
 OPTIONS
@@ -23,15 +23,15 @@ OPTIONS
     "README.md".
 
   user
-    Travis CI username. Required.
+    Github username. Required.
 
   repo
-    Travis CI repository name. Required.
+    Github repository name. Required.
 
 SEE ALSO
     <https://travis-ci.org>
 
-    Dist::Zilla::Plugin:::ReadmeAnyFromPod
+    Dist::Zilla::Plugin::ReadmeAnyFromPod
 
     Dist::Zilla
 

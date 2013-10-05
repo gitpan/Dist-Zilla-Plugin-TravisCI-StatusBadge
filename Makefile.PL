@@ -28,13 +28,16 @@ my %WriteMakefileArgs = (
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
+    "Dist::Zilla::Plugin::ReadmeAnyFromPod" => "0.131500",
+    "File::Spec" => 0,
     "File::Temp" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
-    "Test::More" => "0.98",
+    "Test::More" => 0,
+    "Test::Most" => "0.31",
     "Test::Pod" => "1.41"
   },
-  "VERSION" => "0.002",
+  "VERSION" => "0.003",
   "test" => {
     "TESTS" => "t/*.t"
   }

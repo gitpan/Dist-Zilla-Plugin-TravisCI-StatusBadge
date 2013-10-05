@@ -8,7 +8,7 @@ use Moose;
 use namespace::autoclean;
 use Dist::Zilla::File::OnDisk;
 
-our $VERSION = '0.002'; # VERSION
+our $VERSION = '0.003'; # VERSION
 our $AUTHORITY = 'cpan:CHIM'; # AUTHORITY
 
 with qw(
@@ -88,7 +88,7 @@ Dist::Zilla::Plugin::TravisCI::StatusBadge - Get Travis CI status badge for your
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 
@@ -99,8 +99,8 @@ version 0.002
 
 =head1 DESCRIPTION
 
-Scans dist files if a C<README.md> file has found, a Travis CI 'build status' badge will be added before the B<VERSION> header.
-Use L<Dist::Zilla::Plugin:::ReadmeAnyFromPod> in markdown mode or any other plugin to generate README.md.
+Scans dist files if a C<README.md> file has found, a Travis CI C<build status> badge will be added before the B<VERSION> header.
+Use L<Dist::Zilla::Plugin::ReadmeAnyFromPod> in markdown mode or any other plugin to generate README.md.
 
 =head1 OPTIONS
 
@@ -110,17 +110,17 @@ The name of file to inject build status badge. Default value is C<README.md>.
 
 =head2 user
 
-Travis CI username. Required.
+Github username. Required.
 
 =head2 repo
 
-Travis CI repository name. Required.
+Github repository name. Required.
 
 =head1 SEE ALSO
 
 L<https://travis-ci.org>
 
-L<Dist::Zilla::Plugin:::ReadmeAnyFromPod>
+L<Dist::Zilla::Plugin::ReadmeAnyFromPod>
 
 L<Dist::Zilla>
 

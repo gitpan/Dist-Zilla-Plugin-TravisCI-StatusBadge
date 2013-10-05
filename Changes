@@ -1,7 +1,22 @@
-Revision history for Perl extension Dist::Zilla::Plugin::TravisCI::StatusBadge.
+Revision history for Perl module Dist::Zilla::Plugin::TravisCI::StatusBadge.
+
+0.003   Sat Oct 5 18:43:14 2013 +0000
+
+    [ DOCUMENTATION ]
+    - fixed user/repo name in the pod
+    - fixed links to Dist::Zilla::Plugin::ReadmeAnyFromPod
+
+    [ TESTS ]
+    - added feature testing
+
+    [ META ]
+    - start using groups in Changes
 
 0.002   Mon Sep 23 18:39:31 2013 +0000
-    - fix documetation
+
+    [ DOCUMENTATION ]
+    - fixed badge placement description
 
 0.001   Mon Sep 23 15:32:24 2013 +0000
+
     - initial release
