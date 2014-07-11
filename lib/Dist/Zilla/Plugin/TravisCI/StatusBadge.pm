@@ -4,15 +4,17 @@ package Dist::Zilla::Plugin::TravisCI::StatusBadge;
 
 use strict;
 use warnings;
+use Path::Tiny 0.004;
+use Encode qw(encode);
 use Moose;
 use namespace::autoclean;
 use Dist::Zilla::File::OnDisk;
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 our $AUTHORITY = 'cpan:CHIM'; # AUTHORITY
 
 with qw(
-    Dist::Zilla::Role::InstallTool
+    Dist::Zilla::Role::AfterBuild
 );
 
 has readme => (
@@ -33,7 +35,19 @@ has repo => (
     default => sub { '' },
 );
 
-sub setup_installer {
+has branch => (
+    is      => 'rw',
+    isa     => 'Str',
+    default => sub { 'master' },
+);
+
+has vector => (
+    is      => 'rw',
+    isa     => 'Bool',
+    default => sub { 0 },
+);
+
+sub after_build {
     my ($self) = @_;
 
     if ($self->user eq '' || $self->repo eq '') {
@@ -49,22 +63,32 @@ sub setup_installer {
 
         my $edited;
 
-        require File::Slurp;
-
         foreach my $line (split /\n/, $readme->content) {
             if ($line =~ /^# VERSION/) {
                 $self->log("Inject build status badge");
                 $line = join '' =>
                     sprintf(
-                        "[![build status](https://secure.travis-ci.org/%s/%s.png)](https://travis-ci.org/%s/%s)\n\n" =>
-                        ($self->user, $self->repo) x 2
+                        "[![Build Status](https://travis-ci.org/%s/%s.%s?branch=%s)](https://travis-ci.org/%s/%s)\n\n" =>
+                        $self->user, $self->repo,
+                        ( $self->vector ? 'svg' : 'png' ),
+                        $self->branch, $self->user, $self->repo
                     ),
                     $line;
             }
             $edited .= $line . "\n";
         }
 
-        File::Slurp::write_file("$file", {binmode => ':raw'}, $edited);
+        my $encoding =
+            $readme->can('encoding')
+                ? $readme->encoding
+                : 'raw'                             # Dist::Zilla pre-5.0
+                ;
+
+        Path::Tiny::path($file)->spew_raw(
+            $encoding eq 'raw'
+                ? $edited
+                : encode($encoding, $edited)
+        );
     }
     else {
         $self->log("Not found " . $self->readme . " in root directory.");
@@ -82,13 +106,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Dist::Zilla::Plugin::TravisCI::StatusBadge - Get Travis CI status badge for your markdown README
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 
@@ -96,6 +122,8 @@ version 0.003
     [TravisCI::StatusBadge]
     user = johndoe
     repo = p5-John-Doe-Stuff
+    branch = foo        ;; "master" by default
+    vector = 1          ;; SVG image
 
 =head1 DESCRIPTION
 
@@ -115,6 +143,15 @@ Github username. Required.
 =head2 repo
 
 Github repository name. Required.
+
+=head2 branch
+
+Branch name which build status should be shown. Optional. Default value is B<master>.
+
+=head2 vector
+
+Use vector representation (SVG) of build status image. Optional. Default value is B<false> which means
+using of the raster representation (PNG).
 
 =head1 SEE ALSO
 

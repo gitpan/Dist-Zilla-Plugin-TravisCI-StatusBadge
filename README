@@ -3,13 +3,15 @@ NAME
     for your markdown README
 
 VERSION
-    version 0.003
+    version 0.004
 
 SYNOPSIS
         ; in dist.ini
         [TravisCI::StatusBadge]
         user = johndoe
         repo = p5-John-Doe-Stuff
+        branch = foo        ;; "master" by default
+        vector = 1          ;; SVG image
 
 DESCRIPTION
     Scans dist files if a "README.md" file has found, a Travis CI "build
@@ -27,6 +29,14 @@ OPTIONS
 
   repo
     Github repository name. Required.
+
+  branch
+    Branch name which build status should be shown. Optional. Default value
+    is master.
+
+  vector
+    Use vector representation (SVG) of build status image. Optional. Default
+    value is false which means using of the raster representation (PNG).
 
 SEE ALSO
     <https://travis-ci.org>

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::Most tests => 12;
+use Test::Most tests => 19;
 
 use Test::DZil;
 use Dist::Zilla::Plugin::ReadmeAnyFromPod;
@@ -16,14 +16,22 @@ my $md = [
 
 my @configs = (
     config_okay => [ $md, [ 'TravisCI::StatusBadge' => { repo => 'p5-John-Doe', user => 'johndoe' } ] ],
-        qr{\Q[![build status]\E.*travis-ci\.org.*johndoe/p5-John-Doe.*},
+        qr{\Q[![Build Status]\E.*travis-ci\.org.*master.*johndoe/p5-John-Doe.*},
+    okay_branch => [ $md, [ 'TravisCI::StatusBadge' => { repo => 'p5-John-Doe', user => 'johndoe', branch => 'foo22' } ] ],
+        qr{\Q[![Build Status]\E.*travis-ci\.org.*foo22.*johndoe/p5-John-Doe.*},
+    okay_vector => [ $md, [ 'TravisCI::StatusBadge' => { repo => 'p5-John-Doe', user => 'johndoe', vector => 1 } ] ],
+        qr{\Q[![Build Status]\E.*travis-ci\.org.*svg\?branch.*johndoe/p5-John-Doe.*},
     missed_both => [ $md, [ 'TravisCI::StatusBadge' => { } ] ],
-        qr{[^\Q[![build status]\E]},
+        qr{[^\Q[![Build Status]\E]},
     missed_user => [ $md, [ 'TravisCI::StatusBadge' => { repo => 'p5-John-Doe' } ] ],
-        qr{[^\Q[![build status]\E]},
+        qr{[^\Q[![Build Status]\E]},
     missed_repo => [ $md, [ 'TravisCI::StatusBadge' => { user => 'johndoe' } ] ],
-        qr{[^\Q[![build status]\E]},
+        qr{[^\Q[![Build Status]\E]},
 );
+
+my $no_readme = [
+    $md, [ 'TravisCI::StatusBadge' => { repo => 'p5-John-Doe', user => 'johndoe', readme => 'README.markdown' } ],
+];
 
 my $builder = sub {
     Builder->from_config(
@@ -44,5 +52,8 @@ while (my ($case, $config, $result) = splice @configs, 0, 3) {
         like $content, qr/$result/,                                         "$case Travis CI build status badge okay";
     }
 }
+
+my $tzil = $builder->(@$no_readme);
+lives_ok { $tzil->build; }                                                  "wrong README.md dist built okay";
 
 1;
