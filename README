@@ -3,7 +3,7 @@ NAME
     for your markdown README
 
 VERSION
-    version 0.004
+    version 0.005
 
 SYNOPSIS
         ; in dist.ini
@@ -12,6 +12,10 @@ SYNOPSIS
         repo = p5-John-Doe-Stuff
         branch = foo        ;; "master" by default
         vector = 1          ;; SVG image
+
+        ; or just
+        [TravisCI::StatusBadge]
+        ;; shortcut for "png image; master branch; user/repo from meta resources"
 
 DESCRIPTION
     Scans dist files if a "README.md" file has found, a Travis CI "build
@@ -25,10 +29,14 @@ OPTIONS
     "README.md".
 
   user
-    Github username. Required.
+    Github username. Might be obtained automatically (if not given) from
+    META resources ("resources.homepage", "resources.repository.web",
+    "resources.repository.url").
 
   repo
-    Github repository name. Required.
+    Github repository name. Might be obtained automatically (if not given)
+    from META resources ("resources.homepage", "resources.repository.web",
+    "resources.repository.url").
 
   branch
     Branch name which build status should be shown. Optional. Default value
@@ -42,6 +50,10 @@ SEE ALSO
     <https://travis-ci.org>
 
     Dist::Zilla::Plugin::ReadmeAnyFromPod
+
+    Dist::Zilla::Plugin::GithubMeta
+
+    Dist::Zilla::Role::AfterBuild
 
     Dist::Zilla
 

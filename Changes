@@ -1,5 +1,13 @@
 Revision history for Perl module Dist::Zilla::Plugin::TravisCI::StatusBadge.
 
+0.005   Wed Nov 5 11:44:54 2014 +0000
+    [ FEATURES ]
+    - user/repo might be obtained from meta resources (gh #2)
+
+    [ TESTS ]
+    - using Test::Spec now
+    - excluded [ReadmeAnyFromPod] from tests
+
 0.004   Fri Jul 11 18:20:17 2014 +0000
 
     [ BUGFIXES ]

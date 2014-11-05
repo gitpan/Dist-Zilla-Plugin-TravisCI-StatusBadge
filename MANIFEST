@@ -12,6 +12,12 @@ corpus/dist/DZT/t/basic.t
 lib/Dist/Zilla/Plugin/TravisCI/StatusBadge.pm
 t/00-compile.t
 t/01-basic.t
+t/02-distmeta.t
+t/author-test-eol.t
+t/lib/Builder.pm
 t/release-distmeta.t
+t/release-kwalitee.t
+t/release-no-tabs.t
+t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/release-test-version.t

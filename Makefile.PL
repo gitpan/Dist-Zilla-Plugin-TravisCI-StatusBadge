@@ -28,16 +28,16 @@ my %WriteMakefileArgs = (
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
-    "Dist::Zilla::Plugin::ReadmeAnyFromPod" => "0.133290",
     "File::Spec" => 0,
     "File::Temp" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
+    "Test::Exception" => "0.32",
     "Test::More" => 0,
-    "Test::Most" => "0.31",
-    "Test::Pod" => "1.41"
+    "Test::Pod" => "1.41",
+    "Test::Spec" => "0.47"
   },
-  "VERSION" => "0.004",
+  "VERSION" => "0.005",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -46,16 +46,16 @@ my %WriteMakefileArgs = (
 
 my %FallbackPrereqs = (
   "Dist::Zilla" => 0,
-  "Dist::Zilla::Plugin::ReadmeAnyFromPod" => "0.133290",
   "File::Spec" => 0,
   "File::Temp" => 0,
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
   "Moose" => 0,
   "Path::Tiny" => 0,
+  "Test::Exception" => "0.32",
   "Test::More" => 0,
-  "Test::Most" => "0.31",
   "Test::Pod" => "1.41",
+  "Test::Spec" => "0.47",
   "namespace::autoclean" => 0,
   "strict" => 0,
   "warnings" => 0
