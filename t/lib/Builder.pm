@@ -24,15 +24,29 @@ Aliquam conubia sodales malesuada scelerisque, faucibus orci dapibus senectus eg
 
 MD_SAMPLE
 
+# README.md's builder
 sub tzil {
     shift;
+
+    get_builder( 'README.md', @_ );
+}
+
+# any readme builder
+sub tzil_for {
+    shift;
+
+    get_builder( @_ );
+}
+
+sub get_builder {
+    my ( $filename, @params ) = @_;
 
     Builder->from_config(
         { dist_root => 'corpus/dist/DZT' },
         {
             add_files => {
-                'source/README.md'  => MD_SAMPLE,
-                'source/dist.ini'   => simple_ini( 'GatherDir', @_ ),
+                'source/' . $filename   => MD_SAMPLE,
+                'source/dist.ini'       => simple_ini( 'GatherDir', @params ),
             }
         },
     );

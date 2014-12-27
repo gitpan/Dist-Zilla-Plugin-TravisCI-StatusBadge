@@ -19,6 +19,7 @@ my @files = (
     't/00-compile.t',
     't/01-basic.t',
     't/02-distmeta.t',
+    't/03-anyreadme.t',
     't/author-test-eol.t',
     't/lib/Builder.pm',
     't/release-distmeta.t',

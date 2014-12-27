@@ -10,7 +10,7 @@ use Moose;
 use namespace::autoclean;
 use Dist::Zilla::File::OnDisk;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 our $AUTHORITY = 'cpan:CHIM'; # AUTHORITY
 
 with qw(
@@ -18,9 +18,10 @@ with qw(
 );
 
 has readme => (
-    is      => 'rw',
-    isa     => 'Str',
-    default => sub { 'README.md' },
+    is          => 'rw',
+    isa         => 'Str',
+    predicate   => 'has_readme',
+    clearer     => 'clear_readme',
 );
 
 has user => (
@@ -47,9 +48,38 @@ has vector => (
     default => sub { 0 },
 );
 
+has ext => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [qw( md mkdn markdown )] },
+);
+
+has names => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [qw( README Readme )] },
+);
+
+has matrix => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    lazy    => 1,
+    default => sub {
+        my ( $self ) = @_;
+
+        my @combies;
+
+        for my $ext ( @{ $self->ext } ) {
+            push @combies, map { $_ . '.' . $ext } @{ $self->names };
+        }
+
+        [ @combies ];
+    },
+);
+
 
 sub after_build {
-    my ($self) = @_;
+    my ( $self ) = @_;
 
     # fill user/repo using distmeta
     $self->_try_distmeta()      unless $self->has_user && $self->has_repo;
@@ -59,45 +89,45 @@ sub after_build {
         return;
     }
 
-    my $file  = $self->zilla->root->file($self->readme);
+    my $file = $self->_try_any_readme();
 
-    if (-e $file) {
-        $self->log("Override " . $self->readme . " in root directory.");
-        my $readme = Dist::Zilla::File::OnDisk->new(name => "$file");
-
-        my $edited;
-
-        foreach my $line (split /\n/, $readme->content) {
-            if ($line =~ /^# VERSION/) {
-                $self->log("Inject build status badge");
-                $line = join '' =>
-                    sprintf(
-                        "[![Build Status](https://travis-ci.org/%s/%s.%s?branch=%s)](https://travis-ci.org/%s/%s)\n\n" =>
-                        $self->user, $self->repo,
-                        ( $self->vector ? 'svg' : 'png' ),
-                        $self->branch, $self->user, $self->repo
-                    ),
-                    $line;
-            }
-            $edited .= $line . "\n";
-        }
-
-        my $encoding =
-            $readme->can('encoding')
-                ? $readme->encoding
-                : 'raw'                             # Dist::Zilla pre-5.0
-                ;
-
-        Path::Tiny::path($file)->spew_raw(
-            $encoding eq 'raw'
-                ? $edited
-                : encode($encoding, $edited)
-        );
-    }
-    else {
-        $self->log("Not found " . $self->readme . " in root directory.");
+    unless ( $self->has_readme ) {
+        $self->log( "No README found in root directory." );
         return;
     }
+
+    $self->log( "Override " . $self->readme . " in root directory." );
+
+    my $readme = Dist::Zilla::File::OnDisk->new( name => "$file" );
+
+    my $edited;
+
+    foreach my $line ( split /\n/, $readme->content ) {
+        if ( $line =~ /^# VERSION/ ) {
+            $self->log( "Inject build status badge" );
+            $line = join '' =>
+                sprintf(
+                    "[![Build Status](https://travis-ci.org/%s/%s.%s?branch=%s)](https://travis-ci.org/%s/%s)\n\n" =>
+                    $self->user, $self->repo,
+                    ( $self->vector ? 'svg' : 'png' ),
+                    $self->branch, $self->user, $self->repo
+                ),
+                $line;
+        }
+        $edited .= $line . "\n";
+    }
+
+    my $encoding =
+        $readme->can( 'encoding' )
+            ? $readme->encoding
+            : 'raw'                             # Dist::Zilla pre-5.0
+            ;
+
+    Path::Tiny::path( $file )->spew_raw(
+        $encoding eq 'raw'
+            ? $edited
+            : encode( $encoding, $edited )
+    );
 
     return;
 }
@@ -158,9 +188,38 @@ sub _try_distmeta {
     }
 }
 
+
+# guess readme filename
+sub _try_any_readme {
+    my ( $self ) = @_;
+
+    my $zillafile;
+
+    my @variations = (
+        ( $self->has_readme ? $self->readme : () ),
+        @{ $self->matrix },
+    );
+
+    for my $name ( @variations ) {
+        next    unless $name;
+
+        $self->clear_readme;
+
+        my $file = $self->zilla->root->file( $name );
+
+        if ( -e $file ) {
+            $self->readme( $name );
+            $zillafile = $file;
+            last;
+        }
+    }
+
+    return $zillafile;
+}
+
 __PACKAGE__->meta->make_immutable;
 
-1; # End of Dist::Zilla::Plugin::TravisCI::StatusBadge
+1;
 
 __END__
 
@@ -174,7 +233,7 @@ Dist::Zilla::Plugin::TravisCI::StatusBadge - Get Travis CI status badge for your
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -191,10 +250,21 @@ version 0.005
 
 =head1 DESCRIPTION
 
-Scans dist files if a C<README.md> file has found, a Travis CI C<build status> badge will be added before the B<VERSION> header.
-Use L<Dist::Zilla::Plugin::ReadmeAnyFromPod> in markdown mode or any other plugin to generate README.md.
+Injects the Travis CI C<Build status> badge before the B<VERSION> header into any form of C<README.md>
+file.
+
+Traget readme might be pointed via option L</readme> or guessed by module.
+
+Use L<Dist::Zilla::Plugin::ReadmeAnyFromPod> in markdown mode or any other plugin to generate target file
+
+    [ReadmeAnyFromPod / ReadmeMdInRoot]
+    type     = markdown
+    filename = README.md
+    location = root
 
 =for Pod::Coverage after_build
+
+=for Pod::Coverage _try_distmeta
 
 =for Pod::Coverage _try_distmeta
 
@@ -202,7 +272,12 @@ Use L<Dist::Zilla::Plugin::ReadmeAnyFromPod> in markdown mode or any other plugi
 
 =head2 readme
 
-The name of file to inject build status badge. Default value is C<README.md>.
+The name of file to inject build status badge. No default value but there is some logic to guess target
+filename. File can be named as C<README> or C<Readme> and has the one of following extensions: C<md>,
+C<mkdn> or C<markdown>.
+
+In case of some name passed via this option, it will be used only if the target file exists otherwise
+will be checked default variations and used first found.
 
 =head2 user
 

@@ -1,6 +1,15 @@
 Revision history for Perl module Dist::Zilla::Plugin::TravisCI::StatusBadge.
 
+0.006   Sat Dec 27 19:22:41 2014 +0000
+
+    [ FEATURES ]
+    - guess target filename and use it when not passed via option
+
+    [ TESTS ]
+    - added tests for anyreadme feature
+
 0.005   Wed Nov 5 11:44:54 2014 +0000
+
     [ FEATURES ]
     - user/repo might be obtained from meta resources (gh #2)
 

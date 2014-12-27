@@ -1,3 +1,5 @@
+#!/usr/bin/env perl
+
 use Test::Spec;
 use Test::Exception;
 use Test::DZil;
